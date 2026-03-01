@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class PantallaRegistroPaciente extends StatefulWidget {
   const PantallaRegistroPaciente({super.key});
@@ -11,12 +13,60 @@ class PantallaRegistroPaciente extends StatefulWidget {
 class _PantallaRegistroPacienteState
     extends State<PantallaRegistroPaciente> {
 
-  int pasoActual = 1;
-
-  final _formKeyPaso1 = GlobalKey<FormState>();
-  final _formKeyPaso2 = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   bool aceptaTerminos = false;
+
+  // 🔹 Controllers
+  final nombreController = TextEditingController();
+  final apellidoPController = TextEditingController();
+  final apellidoMController = TextEditingController();
+  final correoController = TextEditingController();
+  final curpController = TextEditingController();
+  final passwordController = TextEditingController();
+  final fechaController = TextEditingController();
+
+  // 🔥 FUNCIÓN REGISTRO
+  Future<void> registrarPaciente() async {
+    print("REGISTRO EJECUTÁNDOSE");
+
+    final url = Uri.parse("http://192.168.150.72:8000/api/register");
+
+    try {
+final response = await http.post(
+  url,
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  body: jsonEncode({
+    "nombre": nombreController.text,
+    "apellido_paterno": apellidoPController.text,
+    "apellido_materno": apellidoMController.text,
+    "correo_electronico": correoController.text,
+    "contrasenia": passwordController.text,
+    "curp": curpController.text,
+    "fecha_nacimiento": fechaController.text,
+    "id_rol": 1
+  }),
+);
+
+      print("Status: ${response.statusCode}");
+      print("Body: ${response.body}");
+
+      if (response.statusCode == 201) {
+        Navigator.pushReplacementNamed(context, '/login');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.body)),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error de conexión")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,180 +77,106 @@ class _PantallaRegistroPacienteState
         elevation: 0,
         foregroundColor: Colors.black,
         automaticallyImplyLeading: true,
-        title: Text(
-          pasoActual == 1
-              ? "Crear cuenta"
-              : "Finalizar Registro",
-        ),
+        title: const Text("Crear cuenta"),
         centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
-        child: pasoActual == 1
-            ? _paso1()
-            : _paso2(),
-      ),
-    );
-  }
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-  // =========================
-  // PASO 1
-  // =========================
-
-  Widget _paso1() {
-    return Form(
-      key: _formKeyPaso1,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            const Text(
-              "Complete sus datos para continuar.",
-              style: TextStyle(color: Colors.grey),
-            ),
-
-            const SizedBox(height: 30),
-
-            _campo("Nombre Completo"),
-            const SizedBox(height: 16),
-
-            _campo("Correo Electrónico"),
-            const SizedBox(height: 16),
-
-            _campo("CURP"),
-            const SizedBox(height: 16),
-
-            _campo("Contraseña", esPassword: true),
-            const SizedBox(height: 16),
-
-            _campo("Fecha de Nacimiento (dd/mm/yyyy)"),
-
-            const SizedBox(height: 30),
-
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2563EB),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                const Text(
+                  "Complete sus datos para registrarse.",
+                  style: TextStyle(color: Colors.grey),
                 ),
-                onPressed: () {
-                  if (_formKeyPaso1.currentState!.validate()) {
+
+                const SizedBox(height: 30),
+
+                _campo("Nombre", controller: nombreController),
+                const SizedBox(height: 16),
+
+                _campo("Apellido Paterno", controller: apellidoPController),
+                const SizedBox(height: 16),
+
+                _campo("Apellido Materno", controller: apellidoMController),
+                const SizedBox(height: 16),
+
+                _campo("Correo Electrónico", controller: correoController),
+                const SizedBox(height: 16),
+
+                _campo("CURP", controller: curpController),
+                const SizedBox(height: 16),
+
+                _campo("Contraseña", esPassword: true, controller: passwordController),
+                const SizedBox(height: 16),
+
+                _campo("Fecha de Nacimiento (YYYY-MM-DD)", controller: fechaController),
+
+                const SizedBox(height: 20),
+
+                CheckboxListTile(
+                  value: aceptaTerminos,
+                  onChanged: (value) {
                     setState(() {
-                      pasoActual = 2;
+                      aceptaTerminos = value ?? false;
                     });
-                  }
-                },
-                child: const Text("Continuar →"),
-              ),
-            ),
+                  },
+                  title: const Text(
+                    "Acepto los Términos y Condiciones",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                ),
 
-            const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-            _cajaAyuda(
-                "¿Necesitas ayuda?",
-                "Si tiene dificultades para completar este formulario, puede llamar a nuestro centro de asistencia."),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // =========================
-  // PASO 2
-  // =========================
-
-  Widget _paso2() {
-    return Form(
-      key: _formKeyPaso2,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            const Text(
-              "Seguridad de su cuenta",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            _campo("Crear Contraseña", esPassword: true),
-            const SizedBox(height: 16),
-
-            _campo("Confirmar Contraseña", esPassword: true),
-            const SizedBox(height: 20),
-
-            CheckboxListTile(
-              value: aceptaTerminos,
-              onChanged: (value) {
-                setState(() {
-                  aceptaTerminos = value ?? false;
-                });
-              },
-              title: const Text(
-                "Acepto los Términos y Condiciones",
-                style: TextStyle(fontSize: 14),
-              ),
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: aceptaTerminos
-                      ? const Color(0xFF2563EB)
-                      : Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: aceptaTerminos
+                          ? const Color(0xFF2563EB)
+                          : Colors.grey,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onPressed: aceptaTerminos
+                        ? () {
+                            if (_formKey.currentState!.validate()) {
+                              registrarPaciente();
+                            }
+                          }
+                        : null,
+                    child: const Text("Confirmar Registro"),
                   ),
                 ),
-                onPressed: aceptaTerminos
-                    ? () {
-                        if (_formKeyPaso2.currentState!.validate()) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(
-                            const SnackBar(
-                              content:
-                                  Text("Registro completado 🎉"),
-                            ),
-                          );
-                        }
-                      }
-                    : null,
-                child: const Text("Finalizar Registro"),
-              ),
+
+                const SizedBox(height: 20),
+
+                _cajaAyuda(
+                  "Tu seguridad es nuestra prioridad",
+                  "Toda su información personal será protegida bajo los estándares internacionales de seguridad.",
+                ),
+              ],
             ),
-
-            const SizedBox(height: 20),
-
-            _cajaAyuda(
-                "Tu seguridad es nuestra prioridad",
-                "Toda su información personal será protegida bajo los estándares internacionales de seguridad."),
-          ],
+          ),
         ),
       ),
     );
   }
-
-  // =========================
-  // COMPONENTES
-  // =========================
 
   Widget _campo(String label,
-      {bool esPassword = false}) {
+      {bool esPassword = false,
+      TextEditingController? controller}) {
     return TextFormField(
+      controller: controller,
       obscureText: esPassword,
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -231,9 +207,7 @@ class _PantallaRegistroPacienteState
         children: [
           Text(
             titulo,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(texto),

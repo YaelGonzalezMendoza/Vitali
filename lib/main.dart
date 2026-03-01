@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:meditrack_app/autenticacion/pantallas/pantalla_confirmar_reset.dart';
+import 'package:meditrack_app/autenticacion/pantallas/pantalla_solicitar_reset.dart';
+import 'package:meditrack_app/medico/pantalla_inicio_medico.dart';
 import 'package:meditrack_app/paciente/pantalla_inicio_paciente.dart';
 
 import 'autenticacion/pantallas/pantalla_bienvenida.dart';
@@ -47,6 +50,16 @@ class VitaliApp extends StatelessWidget {
         // 🔵 HOME PACIENTE
         '/homePaciente': (context) =>
             const PantallaInicioPaciente(),
+
+        // 🔥 HOME MEDICO
+        '/homeMedico': (context) => 
+            const PantallaInicioMedico(),
+        
+        '/solicitarReset': (context) =>
+            const PantallaSolicitarReset(),
+
+         '/confirmarReset': (context) =>
+          const PantallaConfirmarReset(),
       },
     );
   }

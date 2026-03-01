@@ -81,9 +81,10 @@ class PantallaInicio extends StatelessWidget {
                   const SizedBox(height: 30),
 
                   /// Imagen
-                  Expanded(
+                  SizedBox(
+                    height: 150, // 👈 más pequeño para subir todo
                     child: Image.asset(
-                      'assets/imagenes/equipo_medico.png',
+                      'assets/imagenes/doctor1.png',
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -95,17 +96,22 @@ class PantallaInicio extends StatelessWidget {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2563EB),
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
                       onPressed: () {
                         Navigator.pushNamed(
-                            context, AppRutas.login);
+                          context,
+                          AppRutas.login,
+                        );
                       },
                       child: const Text(
                         "Iniciar Sesión",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
@@ -128,7 +134,9 @@ class PantallaInicio extends StatelessWidget {
                       ),
                       onPressed: () {
                         Navigator.pushNamed(
-                            context, AppRutas.seleccionRol);
+                          context,
+                          AppRutas.seleccionRol,
+                        );
                       },
                       child: const Text(
                         "Registrarse",
@@ -142,6 +150,7 @@ class PantallaInicio extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
+                  /// Texto inferior
                   const Text(
                     "Diseñado para ser fácil de usar",
                     style: TextStyle(
@@ -155,14 +164,24 @@ class PantallaInicio extends StatelessWidget {
               ),
             ),
 
-            /// BOTÓN FLOTANTE ACCESIBILIDAD
+            /// 🔵 BOTÓN FLOTANTE ACCESIBILIDAD
             Positioned(
-              bottom: 30,
-              right: 20,
-              child: FloatingActionButton(
-                backgroundColor: const Color(0xFF2563EB),
-                onPressed: () {},
-                child: const Icon(Icons.accessibility),
+              bottom: 20,
+              right: 16,
+              child: SizedBox(
+                width: 52,
+                height: 52,
+                child: FloatingActionButton(
+                  backgroundColor: const Color(0xFF2563EB),
+                  elevation: 6,
+                  shape: const CircleBorder(),
+                  onPressed: () {},
+                  child: const Icon(
+                    Icons.accessibility,
+                    color: Colors.white,
+                    size: 26,
+                  ),
+                ),
               ),
             ),
           ],
