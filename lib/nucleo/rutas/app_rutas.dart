@@ -4,4 +4,5 @@ class AppRutas {
   static const String login = '/login';
   static const inicio = '/inicio'; // 👈 AGREGA ESTA
   static const recuperarPassword = '/recuperarPassword';
+  static const String crearRecordatorio = '/paciente/pantalla_crear_recordatorio.dart';
 }

@@ -11,6 +11,8 @@ import 'autenticacion/pantallas/pantalla_login.dart';
 import 'autenticacion/pantallas/pantalla_registro_paciente.dart';
 import 'autenticacion/pantallas/pantalla_registro_medico.dart';
 
+import 'paciente/pantalla_crear_recordatorio.dart';
+
 
 void main() {
   runApp(const VitaliApp());
@@ -60,6 +62,9 @@ class VitaliApp extends StatelessWidget {
 
          '/confirmarReset': (context) =>
           const PantallaConfirmarReset(),
+
+        '/crearRecordatorio': (context) =>
+          const PantallaCrearRecordatorio(),
       },
     );
   }

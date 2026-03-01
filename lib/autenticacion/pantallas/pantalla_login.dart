@@ -34,14 +34,23 @@ class _PantallaLoginState extends State<PantallaLogin> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final int rol = data["user"]["id_rol"];
+       final usuario = data["user"];
+        final int rol = usuario["id_rol"];
 
         print("Rol recibido: $rol");
 
         if (rol == 1) {
-          Navigator.pushReplacementNamed(context, '/homePaciente');
+          Navigator.pushReplacementNamed(
+            context,
+            '/homePaciente',
+            arguments: usuario, // 👈 AQUÍ ESTÁ EL CAMBIO
+          );
         } else if (rol == 2) {
-          Navigator.pushReplacementNamed(context, '/homeMedico');
+          Navigator.pushReplacementNamed(
+            context,
+            '/homeMedico',
+            arguments: usuario, // opcional pero recomendable
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Rol no reconocido")),
