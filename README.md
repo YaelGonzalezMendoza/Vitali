@@ -1,4 +1,4 @@
-# Vitali
+# Vitali-app
 
 Aplicación móvil desarrollada en Flutter como parte del Proyecto Integrador.
 
